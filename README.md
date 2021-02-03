@@ -5,4 +5,4 @@ Repository contains all the code neccessery to run working solution for smart mi
 TODO add architecture
 
 ## Test environment
-Configuration and usage of test environment can be found in [tes environment documentation](doc/test_environment.md).
+Configuration and usage of test environment can be found in [test environment documentation](doc/test_environment.md).
