@@ -1,3 +1,4 @@
+# TODO: resolve problems with installing OpenCV on raspberry pi
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 import time
