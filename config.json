@@ -1,0 +1,14 @@
+{
+  "server": "tcp://127.0.0.1:%s",
+  "camera": {
+    "port": 5001,
+    "camera_resolution": {
+      "weight": 1024,
+      "height": 768
+    },
+    "image_format": ".jpg"
+  },
+  "distance_sensor": {
+    "port": 5002
+  }
+}
