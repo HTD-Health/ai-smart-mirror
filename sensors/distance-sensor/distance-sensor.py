@@ -5,14 +5,30 @@ import time
 
 import RPi.GPIO as GPIO
 
+# Define GPIO to use on Pi
+GPIO_TRIGGER = 23
+GPIO_ECHO = 24
+
+TRIGGER_PULSE_TIME = 0.00001  # Needs to be 10us pulse to trigger the sensor
+SLEEP_TIME = 0.1
+SENSOR_SETTLE_TIME = 0.3
+
+SPEED_OF_SOUND = 34300  # cm/s
+HALF_SPEED_OF_SOUND = SPEED_OF_SOUND / 2
+TIME_PRECISION = 0.0001  # s
+
+
+def send_trigger():
+    # Send 10us pulse to trigger
+    GPIO.output(GPIO_TRIGGER, True)
+    time.sleep(TRIGGER_PULSE_TIME)
+    GPIO.output(GPIO_TRIGGER, False)
+
+
 # Use BCM GPIO references
 # instead of physical pin numbers
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-
-# Define GPIO to use on Pi
-GPIO_TRIGGER = 23
-GPIO_ECHO = 24
 
 # Set pins as output and input
 GPIO.setup(GPIO_TRIGGER, GPIO.OUT)  # Trigger
@@ -23,7 +39,7 @@ print("Ultrasonic Measurement")
 GPIO.output(GPIO_TRIGGER, False)
 
 # Allow module to settle
-time.sleep(0.3)
+time.sleep(SENSOR_SETTLE_TIME)
 
 with open('distance.csv', mode='w') as csv_file:
     fieldnames = ['time', 'distance']
@@ -32,37 +48,28 @@ with open('distance.csv', mode='w') as csv_file:
     i = 0
     try:
         while True:
-            # Send 10us pulse to trigger
-            GPIO.output(GPIO_TRIGGER, True)
-            time.sleep(0.00001)
-            GPIO.output(GPIO_TRIGGER, False)
-            start = time.time()
-            stop = time.time()
+            send_trigger()
+
             while GPIO.input(GPIO_ECHO) == 0:
-                start = time.time()
+                time.sleep(TIME_PRECISION)
+            echo_start = time.time()
+
             while GPIO.input(GPIO_ECHO) == 1:
-                stop = time.time()
+                time.sleep(TIME_PRECISION)
+            echo_stop = time.time()
 
             # Calculate pulse length
-            elapsed = stop - start
-
-            # Distance pulse travelled in that time is time
-            # multiplied by the speed of sound (cm/s)
-            distancet = elapsed * 34300
-
-            # That was the distance there and back so halve the value
-            distance = round(distancet / 2, 2)
+            pulse_duration = echo_stop - echo_start
+            distance = round(pulse_duration * HALF_SPEED_OF_SOUND, 2)
 
             print("Distance :", distance)
 
             writer.writerow({'time': i, 'distance': distance})
             i += 1
 
-            time.sleep(0.1)
+            time.sleep(SLEEP_TIME)
     except KeyboardInterrupt:
         print("End by user keyboard interrupt")
-    except:
-        print("Unexpected Error")
 
 # Reset GPIO settings
 GPIO.cleanup()
