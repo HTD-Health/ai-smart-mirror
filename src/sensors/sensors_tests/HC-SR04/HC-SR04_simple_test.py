@@ -43,7 +43,7 @@ if __name__ == '__main__':
 	# Argument 1: Trigger output pin
 	parser.add_argument('--trig', type=int, default=7, help='PIN with TRIGGER output PIN.')
 
-    # Argument 2: Echo input pin
+	# Argument 2: Echo input pin
 	parser.add_argument('--echo', type=int, default=11, help='PIN with ECHO input PIN.')
 
 	# Get command line arguments
@@ -56,6 +56,6 @@ if __name__ == '__main__':
 	GPIO.setup(trigger_pin, GPIO.OUT)
 	GPIO.setup(echo_pin, GPIO.IN)
 
-    run_hc_sr04(trigger_pin, echo_pin)
-    sys.exit(0)
+	run_hc_sr04(trigger_pin, echo_pin)
+	sys.exit(0)
 sys.exit(0)
