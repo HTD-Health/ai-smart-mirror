@@ -47,7 +47,7 @@ if __name__ == '__main__':
     # Argument 2: Echo input pin
     parser.add_argument('--echo', type=int, default=11,
                         help='PIN with ECHO input PIN.')
-						
+
 	# Get command line arguments
 	init_args = parser.parse_args()
 	trigger_pin = init_args.trig
