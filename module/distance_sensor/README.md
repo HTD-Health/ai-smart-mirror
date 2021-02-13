@@ -23,7 +23,7 @@ source: [tutorials-raspberrypi.com](https://tutorials-raspberrypi.com/raspberry-
 To start the program type
 
 ```bash
-python distance-sensor.py
+python distance_sensor.py
 ```
 
 It will prompt you with the info on terminal, that it has started working and will display readouts of the sensor.
@@ -33,7 +33,7 @@ next execution).
 
 ## Examples
 
-For the example readings you can go to [results](./results) folder. For now, it contains two examples:
+For the example readings you can go to [results](results) folder. For now, it contains two examples:
 
 1. The person walking to the mirror in the straight line and moving to the side.
 2. The person walking to the mirror from the side and after some time moving to the side.
