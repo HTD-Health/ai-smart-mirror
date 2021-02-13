@@ -50,12 +50,12 @@ if __name__ == '__main__':
 	init_args = parser.parse_args()
 	trigger_pin = init_args.trig
 	echo_pin = init_args.echo
-	
+
 	print('Setting up GPIO...')
 	GPIO.setmode(GPIO.BOARD)  # Setting PIN numbers context. GPIO.BOARD map PIN numbers like on BOARD. GPIO.BCM map PIN numbers like in docummentation.
 	GPIO.setup(trigger_pin, GPIO.OUT)
 	GPIO.setup(echo_pin, GPIO.IN)
-						
+
     run_hc_sr04(trigger_pin, echo_pin)
     sys.exit(0)
 sys.exit(0)
