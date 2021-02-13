@@ -39,7 +39,10 @@ All commands you need to type in remote terminal.
     
 ![Success start live stream](/doc/images/success_run_live_stream.png) 
 
-
+## Distance measurment
+Current solution is using ultrasonic sensor HC-SR04 to measure distance. 
+Trigger PIN: 7 (on board) \ 4 (GPIO)
+Echo PIN: 17 (on board) \ 17 (GPIO)
 
 
 # Usage
@@ -98,6 +101,9 @@ To make o photo just use command:
 
 New file under the name `your_photo_name.jpg` appear in the directory from where you execute the command.
 
+## Distance sensor HC-SR04
+### Measure distance
+Just run script from `src/sensors/sensors_tests/HC-SR04/HC-SR04_simple_test.py`
 
 ## Troubleshooting
 ### Port unavailable
