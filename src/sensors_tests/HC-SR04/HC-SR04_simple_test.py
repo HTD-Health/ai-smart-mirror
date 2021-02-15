@@ -7,7 +7,7 @@ import argparse
 
 
 def run_hc_sr04(trigger_pin: int, echo_pin: int) -> str:
-     # "Warm up" trigger pin...
+    # "Warm up" trigger pin...
     GPIO.output(trigger_pin, GPIO.LOW)           # Set pin to LOW
     time.sleep(2)                                # Wait 2 seconds
 
@@ -47,7 +47,9 @@ if __name__ == '__main__':
     echo_pin = init_args.echo
 
     print('Setting up GPIO...')
-    GPIO.setmode(GPIO.BOARD)  # Setting PIN numbers context. GPIO.BOARD map PIN numbers like on BOARD. GPIO.BCM map PIN numbers like in docummentation.
+    # GPIO.BOARD map PIN numbers like on BOARD.
+    # GPIO.BCM map PIN numbers like in documentation.
+    GPIO.setmode(GPIO.BOARD)  # Setting PIN numbers context.
     GPIO.setup(trigger_pin, GPIO.OUT)
     GPIO.setup(echo_pin, GPIO.IN)
 
