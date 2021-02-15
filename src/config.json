@@ -1,0 +1,33 @@
+{
+  "event_bus": {
+    "event_bus_server_ip": "tcp://127.0.0.1:5556",
+    "receiving_port": 5556,
+    "sending_port": 5555
+  },
+  "camera": {
+    "functionality": {
+      "resolution": {
+        "weight": 1024,
+        "height": 768
+      },
+      "image_format": ".jpg"
+    },
+    "module_logic": {
+      "border_distance": 50
+    },
+    "event_bus": {
+      "topic": 10002
+    }
+  },
+  "distance_sensor": {
+    "functionality": {
+
+    },
+    "module_logic": {
+
+    },
+    "event_bus": {
+      "topic": 10001
+    }
+  }
+}
