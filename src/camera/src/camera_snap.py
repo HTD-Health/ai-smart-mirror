@@ -3,28 +3,29 @@ from datetime import datetime
 
 import picamera
 
-# TODO: add setting things up (in function?)
-# TODO: load config from file
-camera_resolution_weight = 1024
-camera_resolution_height = 768
-image_format = ".jpg"
-# TODO: add setting consumer
-# TODO: add setting producer
-# TODO: adding waiting for signal to work
+from src.utils.config_loader import load_config_file
 
-with picamera.PiCamera() as camera:
-    camera.resolution = (camera_resolution_weight, camera_resolution_height)
-    camera.start_preview()
 
-    # Camera warm-up time
-    time.sleep(2)
+def camera_snap() -> str:
+    # Load configuration data
+    config_data = load_config_file()
+    weight = config_data["camera"]["functionality"]["resolution"]["weight"]
+    height = config_data["camera"]["functionality"]["resolution"]["height"]
+    image_format = config_data["camera"]["functionality"]["image_format"]
 
-    # Prepare file name
-    now = datetime.now()
-    now_str = now.strftime("%d%m%Y%H%M%S")
-    snap_name = now_str + image_format
+    with picamera.PiCamera() as camera:
+        camera.resolution = (weight, height)
+        camera.start_preview()
 
-    # Take snap
-    camera.capture(snap_name)
+        # Camera warm-up time
+        time.sleep(2)
 
-# TODO: adding sending pic
+        # Prepare file name
+        now = datetime.now()
+        now_str = now.strftime("%d%m%Y%H%M%S")
+        snap_name = now_str + image_format
+
+        # Take snap
+        camera.capture(snap_name)
+
+        return snap_name
