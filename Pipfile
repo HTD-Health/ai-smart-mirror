@@ -4,11 +4,20 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-opencv-contrib-python = "*"
 pyzmq = "*"
 
 [dev-packages]
+debugpy = "*"
+mypy = "*"
+pylint = "*"
+flake8 = "*"
 ipython = "*"
+pytest = "*"
+pytest-mypy = "*"
+pytest-cov = "*"
+pytest-flake8 = "*"
+pytest-pylint = "*"
+pytest-asyncio = "*"
 
 [requires]
 python_version = "3.8"

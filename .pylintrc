@@ -1,0 +1,43 @@
+[MASTER]
+
+[FORMAT]
+max-line-length=140
+
+[MESSAGES CONTROL]
+enable=all
+
+disable=
+      attribute-defined-outside-init,
+      fixme,
+      invalid-name,
+      len-as-condition,
+      missing-docstring,
+      no-else-return,
+      no-init,
+      no-member,
+      no-self-use,
+      too-few-public-methods,
+      too-many-locals,
+      unidiomatic-typecheck,
+      unused-argument,
+      redefined-outer-name,
+      arguments-differ,
+      duplicate-code,
+      # https://github.com/PyCQA/pylint/issues/259#issuecomment-267671718
+      no-value-for-parameter,
+      logging-fstring-interpolation,
+
+      # covered by flake8
+      trailing-whitespace,
+      unused-import,
+      unused-variable,
+      line-too-long,
+
+      # INFO
+      file-ignored,
+      locally-disabled,
+      suppressed-message,
+
+[DESIGN]
+max-parents=13
+max-attributes=12
