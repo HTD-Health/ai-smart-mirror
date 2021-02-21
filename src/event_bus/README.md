@@ -21,18 +21,24 @@ docker buildx use smartmirror
 docker buildx inspect --bootstrap
 # Build images for amd64, arm64 and arm/v7 architectures
 docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 .
+
+# with upload to AWS ECR
+docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t 573518775438.dkr.ecr.us-east-2.amazonaws.com/smart-mirror-event-bus:latest --push .
+
+# and confirm the exported images are correctly uploaded
+docker buildx imagetools inspect 573518775438.dkr.ecr.us-east-2.amazonaws.com/smart-mirror-event-bus:latest
 ```
 
 ### Local build
 ```sh
 # build and tag
-docker build -t event-bus-concept .
+docker build -t smart-mirror-event-bus .
 # or build with custom ports and log level as defaults
-docker build --build-arg LOG_LEVEL=debug --build-arg PORT_IN=5500 --build-arg PORT_OUT=5501 -t event-bus-concept .
+docker build --build-arg LOG_LEVEL=debug --build-arg PORT_IN=5500 --build-arg PORT_OUT=5501 -t smart-mirror-event-bus .
 
 # run with port mapping
-docker run -p 5555:5555 -p 5556:5556 event-bus-concept:latest
+docker run -p 5555:5555 -p 5556:5556 smart-mirror-event-bus:latest
 
 # or with custom ports and log level
-docker run -p 5500:5500 -p 5501:5501 --env PORT_IN=5500 --env PORT_OUT=5501 --env LOG_LEVEL=debug event-bus-concept:latest
+docker run -p 5500:5500 -p 5501:5501 --env PORT_IN=5500 --env PORT_OUT=5501 --env LOG_LEVEL=debug smart-mirror-event-bus:latest
 ```

@@ -34,5 +34,5 @@ EXPOSE ${PORT_IN} \
        ${PORT_OUT}
 
 USER ${USER}
-COPY ./src/ /app
+COPY ./code/ /app
 ENTRYPOINT ["sh", "-c", "python event_bus.py --port_in=$PORT_IN --port_out=$PORT_OUT --log_level=$LOG_LEVEL"]
