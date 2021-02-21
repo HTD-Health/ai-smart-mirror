@@ -58,4 +58,5 @@ if __name__ == '__main__':
             print(run_hc_sr04(trigger_pin, echo_pin))
     except KeyboardInterrupt:
         GPIO.cleanup()
+    finally:
         sys.exit(0)
