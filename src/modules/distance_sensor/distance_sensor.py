@@ -23,23 +23,24 @@ def send_trigger(trigger_pin):
     GPIO.output(trigger_pin, False)
 
 
-def run_ultrasonic_sensor(trigger_pin: int, echo_pin: int):
-    while True:
-        send_trigger(trigger_pin)
-
-        while GPIO.input(echo_pin) == 0:
-            time.sleep(TIME_PRECISION)
+def handle_echo_pin_change(channel):
+    # Check if the pin is in High or Low state
+    if GPIO.input(channel):
+        global echo_start
         echo_start = time.time()
-
-        while GPIO.input(echo_pin) == 1:
-            time.sleep(TIME_PRECISION)
+    else:
+        global echo_stop
         echo_stop = time.time()
 
-        # Calculate pulse length
-        pulse_duration = echo_stop - echo_start
-        calculated_distance = round(pulse_duration * HALF_SPEED_OF_SOUND, 2)
 
-        return calculated_distance
+def run_ultrasonic_sensor(trigger_pin, echo_pin):
+    send_trigger(trigger_pin)
+
+    # Calculate pulse length
+    pulse_duration = echo_stop - echo_start
+    calculated_distance = round(pulse_duration * HALF_SPEED_OF_SOUND, 2)
+
+    return calculated_distance
 
 
 def main():
@@ -66,6 +67,8 @@ def main():
     GPIO.setup(trigger_pin, GPIO.OUT)
     GPIO.setup(echo_pin, GPIO.IN)
 
+    GPIO.add_event_detect(echo_pin, GPIO.BOTH, callback=handle_echo_pin_change)
+
     # Set trigger to False (Low)
     GPIO.output(trigger_pin, False)
 
@@ -75,7 +78,9 @@ def main():
     try:
         while True:
             distance = run_ultrasonic_sensor(trigger_pin, echo_pin)
-            print(f"Ultrasonic Measurement - Distance: {distance} cm")
+            print("Ultrasonic Measurement - Distance: " + str(distance) + " cm")
+            # TODO: Send distance value via event bus
+
             time.sleep(SLEEP_TIME)
     except KeyboardInterrupt:
         print("End by user keyboard interrupt")
@@ -85,5 +90,9 @@ def main():
 
 
 if __name__ == '__main__':
+    # Define global variables for the sensor
+    echo_start = 0
+    echo_stop = 0
+
     # Run module
     main()
