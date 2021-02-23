@@ -6,45 +6,44 @@ import sys
 
 import RPi.GPIO as GPIO
 
-# @TODO: move these consts to config file
-SLEEP_TIME = 0.1
-SENSOR_SETTLE_TIME = 0.3
-TIME_PRECISION = 0.0001  # s - to low value creates problems with spotting objects close to the sensor
-
+# Consts that don't need to be set from the outside
 SPEED_OF_SOUND = 34300  # cm/s
 HALF_SPEED_OF_SOUND = SPEED_OF_SOUND / 2
 TRIGGER_PULSE_TIME = 0.00001  # Needs to be 10us pulse to trigger the sensor
+SENSOR_SETTLE_TIME = 0.3  # Time for the sensor to settle after setting the Trigger pin to the LOW state
 
 
-def send_trigger(trigger_pin):
-    # Send pulse to trigger
-    GPIO.output(trigger_pin, True)
-    time.sleep(TRIGGER_PULSE_TIME)
-    GPIO.output(trigger_pin, False)
+class DistanceSensor:
+    def __init__(self, trigger_pin, echo_pin):
+        self.trigger_pin = trigger_pin
+        self.echo_pin = echo_pin
+        self.echo_start = 0
+        self.echo_stop = 0
 
+    def send_trigger(self):
+        # Send pulse to trigger
+        GPIO.output(self.trigger_pin, True)
+        time.sleep(TRIGGER_PULSE_TIME)
+        GPIO.output(self.trigger_pin, False)
 
-def handle_echo_pin_change(channel):
-    # Check if the pin is in High or Low state
-    if GPIO.input(channel):
-        global echo_start
-        echo_start = time.time()
-    else:
-        global echo_stop
-        echo_stop = time.time()
+    def handle_echo_pin_change(self, channel):
+        # Check if the pin is in High or Low state
+        if GPIO.input(channel):
+            self.echo_start = time.time()
+        else:
+            self.echo_stop = time.time()
 
+    def measure_distance(self):
+        self.send_trigger()
 
-def run_ultrasonic_sensor(trigger_pin, echo_pin):
-    send_trigger(trigger_pin)
+        # Calculate pulse length
+        pulse_duration = self.echo_stop - self.echo_start
+        calculated_distance = round(pulse_duration * HALF_SPEED_OF_SOUND, 2)
 
-    # Calculate pulse length
-    pulse_duration = echo_stop - echo_start
-    calculated_distance = round(pulse_duration * HALF_SPEED_OF_SOUND, 2)
-
-    return calculated_distance
+        return calculated_distance
 
 
 def main():
-    # @TODO: Decide how to pass Pins - via console arguments or Consts from the config file.
     # Creates Argument Parser object named parser
     parser = argparse.ArgumentParser()
 
@@ -52,11 +51,14 @@ def main():
     parser.add_argument('--trig', type=int, default=16, help='PIN with TRIGGER output PIN.')
     # Argument 2: Echo input pin
     parser.add_argument('--echo', type=int, default=18, help='PIN with ECHO input PIN.')
+    # Argument 3: Sleep time
+    parser.add_argument('--sleep', type=float, default=0.1, help='Sleep time between distance measurements.')
 
     # Get command line arguments
     init_args = parser.parse_args()
     trigger_pin = init_args.trig
     echo_pin = init_args.echo
+    sleep_time = init_args.sleep
 
     print("Ultrasonic Measurement. Setting up GPIO...")
 
@@ -67,7 +69,9 @@ def main():
     GPIO.setup(trigger_pin, GPIO.OUT)
     GPIO.setup(echo_pin, GPIO.IN)
 
-    GPIO.add_event_detect(echo_pin, GPIO.BOTH, callback=handle_echo_pin_change)
+    distance_sensor = DistanceSensor(trigger_pin, echo_pin)
+
+    GPIO.add_event_detect(echo_pin, GPIO.BOTH, callback=distance_sensor.handle_echo_pin_change)
 
     # Set trigger to False (Low)
     GPIO.output(trigger_pin, False)
@@ -77,22 +81,20 @@ def main():
 
     try:
         while True:
-            distance = run_ultrasonic_sensor(trigger_pin, echo_pin)
+            distance = distance_sensor.measure_distance()
             print("Ultrasonic Measurement - Distance: " + str(distance) + " cm")
             # TODO: Send distance value via event bus
 
-            time.sleep(SLEEP_TIME)
+            time.sleep(sleep_time)
     except KeyboardInterrupt:
         print("End by user keyboard interrupt")
+    except Exception as e:
+        print(e)
     finally:
         GPIO.cleanup()
         sys.exit(0)
 
 
 if __name__ == '__main__':
-    # Define global variables for the sensor
-    echo_start = 0
-    echo_stop = 0
-
     # Run module
     main()
