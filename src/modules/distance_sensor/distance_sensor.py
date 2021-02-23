@@ -3,6 +3,8 @@
 import time
 import argparse
 import sys
+import zmq
+import xdrlib
 
 import RPi.GPIO as GPIO
 
@@ -47,18 +49,25 @@ def main():
     # Creates Argument Parser object named parser
     parser = argparse.ArgumentParser()
 
-    # Argument 1: Trigger output pin
+    # Set arguments
     parser.add_argument('--trig', type=int, default=16, help='PIN with TRIGGER output PIN.')
-    # Argument 2: Echo input pin
     parser.add_argument('--echo', type=int, default=18, help='PIN with ECHO input PIN.')
-    # Argument 3: Sleep time
     parser.add_argument('--sleep', type=float, default=0.1, help='Sleep time between distance measurements.')
+    parser.add_argument('--port', default="5555", help='Port to which connect to')
+    parser.add_argument('--topic', type=int, default=10001, help='Event bus topic for the distance sensor')
 
     # Get command line arguments
     init_args = parser.parse_args()
     trigger_pin = init_args.trig
     echo_pin = init_args.echo
     sleep_time = init_args.sleep
+    port = init_args.port
+    topic = init_args.topic
+
+    context = zmq.Context()
+    socket = context.socket(zmq.PUB)
+    socket.connect("tcp://127.0.0.1:%s" % port)
+    data_packer = xdrlib.Packer()
 
     print("Ultrasonic Measurement. Setting up GPIO...")
 
@@ -83,7 +92,11 @@ def main():
         while True:
             distance = distance_sensor.measure_distance()
             print("Ultrasonic Measurement - Distance: " + str(distance) + " cm")
-            # TODO: Send distance value via event bus
+
+            data_packer.pack_uint(topic)
+            data_packer.pack_float(distance)
+            socket.send(data_packer.get_buffer())
+            data_packer.reset()
 
             time.sleep(sleep_time)
     except KeyboardInterrupt:
