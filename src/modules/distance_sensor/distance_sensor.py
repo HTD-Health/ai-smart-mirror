@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Import required Python libraries
 import time
 import argparse
@@ -12,7 +11,6 @@ import RPi.GPIO as GPIO
 SPEED_OF_SOUND = 34300  # cm/s
 HALF_SPEED_OF_SOUND = SPEED_OF_SOUND / 2
 TRIGGER_PULSE_TIME = 0.00001  # Needs to be 10us pulse to trigger the sensor
-SENSOR_SETTLE_TIME = 0.3  # Time for the sensor to settle after setting the Trigger pin to the LOW state
 
 
 class DistanceSensor:
@@ -22,20 +20,26 @@ class DistanceSensor:
         self.echo_start = 0
         self.echo_stop = 0
 
-    def send_trigger(self):
+    def send_trigger(self) -> None:
+        """ Send trigger pulse to fire up measurement process """
         # Send pulse to trigger
         GPIO.output(self.trigger_pin, True)
         time.sleep(TRIGGER_PULSE_TIME)
         GPIO.output(self.trigger_pin, False)
 
-    def handle_echo_pin_change(self, channel):
+    def handle_echo_pin_change(self, channel) -> None:
+        """ Handle changes for the pin (high and low voltage)
+            Parameters:
+                channel (int): A pin number to listen changes on
+        """
         # Check if the pin is in High or Low state
         if GPIO.input(channel):
             self.echo_start = time.time()
         else:
             self.echo_stop = time.time()
 
-    def measure_distance(self):
+    def measure_distance(self) -> float:
+        """ Trigger sensor and measure a distance """
         self.send_trigger()
 
         # Calculate pulse length
@@ -55,6 +59,10 @@ def main():
     parser.add_argument('--sleep', type=float, default=0.1, help='Sleep time between distance measurements.')
     parser.add_argument('--port', default="5555", help='Port to which connect to')
     parser.add_argument('--topic', type=int, default=10001, help='Event bus topic for the distance sensor')
+    parser.add_argument('--thresholddistance', type=int, default=80, help='Threshold distance under which sensor '
+                                                                          'will fire an event.')
+    parser.add_argument('--sensorsettletime', type=float, default=0.3, help='Time for the sensor to settle after '
+                                                                            'setting the Trigger pin to the LOW state')
 
     # Get command line arguments
     init_args = parser.parse_args()
@@ -63,6 +71,8 @@ def main():
     sleep_time = init_args.sleep
     port = init_args.port
     topic = init_args.topic
+    threshold_distance = init_args.thresholddistance
+    sensor_settle_time = init_args.sensorsettletime
 
     context = zmq.Context()
     socket = context.socket(zmq.PUB)
@@ -86,17 +96,19 @@ def main():
     GPIO.output(trigger_pin, False)
 
     # Allow module to settle
-    time.sleep(SENSOR_SETTLE_TIME)
+    time.sleep(sensor_settle_time)
 
     try:
         while True:
             distance = distance_sensor.measure_distance()
             print("Ultrasonic Measurement - Distance: " + str(distance) + " cm")
 
-            data_packer.pack_uint(topic)
-            data_packer.pack_float(distance)
-            socket.send(data_packer.get_buffer())
-            data_packer.reset()
+            # Send event if measured distance is less than set threshold
+            if distance <= threshold_distance:
+                data_packer.pack_uint(topic)
+                data_packer.pack_float(distance)
+                socket.send(data_packer.get_buffer())
+                data_packer.reset()
 
             time.sleep(sleep_time)
     except KeyboardInterrupt:
