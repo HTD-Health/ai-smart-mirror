@@ -1,0 +1,2 @@
+pyzmq==22.0.2
+picamera==1.13

@@ -7,7 +7,7 @@ import uuid
 
 import zmq
 
-from datetime import datetime
+from pathlib import Path
 
 try:
     import picamera
@@ -90,6 +90,8 @@ def main(
     """
     Waiting for message from distance sensor. On message suitable value take snap from camera and broadcast it.
     """
+    # prepare directory
+    Path(image_dir).mkdir(parents=True, exist_ok=True)
     # Connections and sockets preparation
     # Create socket from where we will be consuming signals
     context = zmq.Context.instance()
