@@ -194,7 +194,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         '--image_dir',
-        default='/tmp',
+        default=PIC_DIRECTORY,
         help='Captured images output directory'
     )
     args = parser.parse_args()
