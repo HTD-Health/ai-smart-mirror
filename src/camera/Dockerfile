@@ -19,6 +19,7 @@ RUN apk update \
     && apk add --no-cache build-base libzmq musl-dev python3 python3-dev zeromq-dev py3-pip \
     && apk add --no-cache raspberrypi-libs || : \
     && READTHEDOCS=True pip install picamera==1.13 \
+    && pip install --upgrade pip \
     # && pip install opencv-python==4.5.1.48 \
     && pip install -r requirements.txt \
     && apk del build-base musl-dev python3-dev zeromq-dev \

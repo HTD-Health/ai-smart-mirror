@@ -12,7 +12,7 @@ from pathlib import Path
 try:
     import picamera
     CAMERA_IMPLEMENTATION = 'picamera'
-except ImportError:
+except (ImportError, OSError):
     import cv2
     CAMERA_IMPLEMENTATION = 'cv2'
 

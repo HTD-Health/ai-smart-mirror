@@ -15,10 +15,10 @@ RUN addgroup -S ${USER} \
 COPY ./requirements.txt /app
 
 RUN apk update \
-    && apk add build-base libzmq musl-dev python3 python3-dev zeromq-dev py3-pip \
-    && pip3 update \
-    && pip3 --upgrade pip \
-    && pip3 install -r requirements.txt \
+    && apk upgrade --no-cache musl \
+    && apk add build-base --no-cache libzmq musl-dev python3 python3-dev zeromq-dev py3-pip \
+    && pip install --upgrade pip \
+    && pip install -r requirements.txt \
     && apk del build-base musl-dev python3-dev zeromq-dev \
     && ln -s /usr/bin/python3 /usr/bin/python \
     && rm -rf /root/.cache /tmp/* \
