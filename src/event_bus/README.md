@@ -12,6 +12,13 @@ Exposed ports (default), each module that produces event should connect to **Inc
 
 You can build an images for local machine or multiple architectures, depending on your needs.
 
+## Running on raspberry
+```
+sudo docker pull 573518775438.dkr.ecr.us-east-2.amazonaws.com/smart-mirror-event-bus:latest
+# run newest image
+sudo docker run --privileged 573518775438.dkr.ecr.us-east-2.amazonaws.com/smart-mirror-event-bus
+```
+
 ### CrossArch build
 More info about [buildx](https://docs.docker.com/docker-for-mac/multi-arch/)
 ```sh

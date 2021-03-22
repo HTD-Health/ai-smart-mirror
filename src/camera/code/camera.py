@@ -79,7 +79,7 @@ def main(
         image_format,
         image_dir,
         # event bus
-        event_bus_server_ip,
+        event_bus_server,
         receiving_port,
         sending_port,
         # Load event bus module configuration
@@ -105,18 +105,20 @@ def main(
     consume_socket = context.socket(zmq.SUB)
     consume_socket.setsockopt(zmq.SUBSCRIBE, data_packer.get_buffer())
     # Connect to event bus server to receive
-    consume_socket.connect(f"{event_bus_server_ip}:{receiving_port}")
+    recive_url = f"tcp://{event_bus_server}:{receiving_port}"
+    consume_socket.connect(recive_url)
 
     # Create socket on where we will be producing signals
     produce_socket = context.socket(zmq.PUB)
     # Connect to event bus server to send
-    produce_socket.connect(f"{event_bus_server_ip}:{sending_port}")
+    produce_url = f"tcp://{event_bus_server}:{sending_port}"
+    produce_socket.connect(produce_url)
 
     data_packer = xdrlib.Packer()
     data_unpacker = xdrlib.Unpacker(b'')
 
     with camera as active_camera:
-        logger.info(f'camera ready, listening for events: {topic_distance}')
+        logger.info(f'camera ready, listening for events: {topic_distance} from {recive_url}')
         # Main loop
         while True:
             # Waiting for any message
@@ -139,7 +141,7 @@ def main(
             data_packer.pack_uint(topic_camera)
             data_packer.pack_string(snap_name.encode('utf-8'))
 
-            logger.info(f'broadcasting topic: {topic_camera} with value: {snap_name}')
+            logger.info(f'broadcasting topic: {topic_camera} with value: {snap_name} to {produce_url}')
 
             # Send data
             produce_socket.send(data_packer.get_buffer())
@@ -148,8 +150,8 @@ def main(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Camera server')
     parser.add_argument(
-        '--event_bus_server_ip',
-        default="tcp://127.0.0.1",
+        '--event_bus_server',
+        default="127.0.0.1",
     )
     parser.add_argument(
         '--port_in',
@@ -163,10 +165,12 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         '--topic_in',
+        type=int,
         default=SOMEONE_VISIBLE,
     )
     parser.add_argument(
         '--topic_out',
+        type=int,
         default=IMAGE_CAPTURED,
     )
     parser.add_argument(
@@ -176,10 +180,12 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         '--image_height',
+        type=int,
         default=768
     )
     parser.add_argument(
         '--image_width',
+        type=int,
         default=1024
     )
     parser.add_argument(
@@ -206,7 +212,7 @@ if __name__ == "__main__":
         camera=camera,
         image_dir=args.image_dir,
         image_format=args.image_format,
-        event_bus_server_ip=args.event_bus_server_ip,
+        event_bus_server=args.event_bus_server,
         topic_camera=args.topic_out,
         topic_distance=args.topic_in,
         sending_port=args.port_out,

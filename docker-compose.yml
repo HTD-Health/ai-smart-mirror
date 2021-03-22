@@ -2,17 +2,36 @@ version: "3.8"
 
 services:
   event-bus:
+    image: 573518775438.dkr.ecr.us-east-2.amazonaws.com/smart-mirror-event-bus:latest
     build:
       context: ./src/event_bus
       args:
         - PORT_IN=5555
         - PORT_OUT=5556
         - LOG_LEVEL=info
-    ports:
-      - 5555:5555
-      - 5556:5556
+    # ports:
+    #   - 5555:5555
+    #   - 5556:5556
+    privileged: True
     environment:
       - LOG_LEVEL=debug
+    networks:
+      - ai-smart-mirror
+
+  camera:
+    image: 573518775438.dkr.ecr.us-east-2.amazonaws.com/smart-mirror-camera:latest
+    build:
+      context: ./src/camera
+    # ports:
+    #   - 5555:5555
+    #   - 5556:5556
+    privileged: True
+    environment:
+      - LOG_LEVEL=debug
+      - EVENT_BUS_SERVER_IP=event-bus
+      - LD_LIBRARY_PATH=/opt/vc/lib
+    volumes:
+      - /tmp/images:/tmp/images
     networks:
       - ai-smart-mirror
 

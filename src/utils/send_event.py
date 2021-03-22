@@ -4,12 +4,11 @@ import zmq
 import xdrlib
 
 
-def main(port, topic, data):
+def main(host, port, topic, data):
     context = zmq.Context()
     socket = context.socket(zmq.PUB)
-    socket.connect("tcp://127.0.0.1:%s" % port)
+    socket.connect("tcp://%s:%s" % (host, port))
     data_packer = xdrlib.Packer()
-
     data_packer.pack_uint(topic)
     data_packer.pack_bytes(data.encode('utf-8'))
     # give some time to connect
@@ -35,4 +34,4 @@ if __name__ == "__main__":
         help='data to be send to topic'
     )
     args = parser.parse_args()
-    main(args.port, args.topic, args.data)
+    main('127.0.0.1', args.port, args.topic, args.data)

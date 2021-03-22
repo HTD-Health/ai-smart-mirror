@@ -15,16 +15,20 @@ RUN addgroup -S ${USER} \
 COPY ./requirements.txt /app
 
 RUN apk update \
-    && apk add build-base libzmq musl-dev python3 python3-dev zeromq-dev py3-pip \
-    && pip3 install -r requirements.txt \
+    && apk upgrade --no-cache musl \
+    && apk add --no-cache build-base libzmq musl-dev python3 python3-dev zeromq-dev py3-pip \
+    && apk add --no-cache raspberrypi-libs || : \
+    && READTHEDOCS=True pip install picamera==1.13 \
+    # && pip install opencv-python==4.5.1.48 \
+    && pip install -r requirements.txt \
     && apk del build-base musl-dev python3-dev zeromq-dev \
     && ln -s /usr/bin/python3 /usr/bin/python \
     && rm -rf /root/.cache /tmp/* \
     && find / | grep -E "(__pycache__|\.pyc|\.pyo$$)" | xargs rm -rf;
 
-ARG PORT_IN=${PORT_IN:-5555} \
-    PORT_OUT=${PORT_OUT:-5556} \
-    EVENT_BUS_SERVER_IP=${EVENT_BUS_SERVER_IP:-tcp://event-bus} \
+ARG PORT_IN=${PORT_IN:-5556} \
+    PORT_OUT=${PORT_OUT:-5555} \
+    EVENT_BUS_SERVER=${EVENT_BUS_SERVER:-event-bus} \
     TOPIC_IN=${TOPIC_IN:-1} \
     TOPIC_OUT=${TOPIC_OUT:-2} \
     IMAGE_HEIGHT=${IMAGE_HEIGHT:-768} \
@@ -35,7 +39,7 @@ ARG PORT_IN=${PORT_IN:-5555} \
 
 ENV PORT_IN=${PORT_IN} \
     PORT_OUT=${PORT_OUT} \
-    EVENT_BUS_SERVER_IP=${EVENT_BUS_SERVER_IP} \
+    EVENT_BUS_SERVER=${EVENT_BUS_SERVER} \
     TOPIC_IN=${TOPIC_IN} \
     TOPIC_OUT=${TOPIC_OUT} \
     IMAGE_HEIGHT=${IMAGE_HEIGHT} \
@@ -48,6 +52,7 @@ ENV PORT_IN=${PORT_IN} \
 EXPOSE ${PORT_IN} \
        ${PORT_OUT}
 
-USER ${USER}
+# Run as root to have access to camera FIXME: change permission to camera device
+# USER ${USER}
 COPY ./code/ /app
-ENTRYPOINT ["sh", "-c", "python camera.py --port_in=$PORT_IN --port_out=$PORT_OUT --log_level=$LOG_LEVEL"]
+ENTRYPOINT ["sh", "-c", "python camera.py --event_bus_server=$EVENT_BUS_SERVER --image_format=$IMAGE_FORMAT --image_dir=$IMAGE_DIR --image_height=$IMAGE_HEIGHT --image_width=$IMAGE_WIDTH --port_in=$PORT_IN --port_out=$PORT_OUT --topic_in=$TOPIC_IN --topic_out=$TOPIC_OUT --log_level=$LOG_LEVEL"]
