@@ -35,6 +35,24 @@ services:
     networks:
       - ai-smart-mirror
 
+  distance_sensor:
+    image: 573518775438.dkr.ecr.us-east-2.amazonaws.com/smart-mirror-distance_sensor:latest
+    build:
+      context: ./src/distance_sensor
+    # ports:
+    #   - 5555:5555
+    #   - 5556:5556
+    privileged: True
+    environment:
+      - LOG_LEVEL=debug
+      - EVENT_BUS_SERVER_IP=event-bus
+      - LD_LIBRARY_PATH=/opt/vc/lib
+      - DUMMY=true
+    volumes:
+      - /tmp/images:/tmp/images
+    networks:
+      - ai-smart-mirror
+
 networks:
   ai-smart-mirror:
     name: ai-smart-mirror

@@ -39,3 +39,24 @@ For the example readings you can go to [results](results) folder. For now, it co
 2. The person walking to the mirror from the side and after some time moving to the side.
 
 It also consists of graphs with visualization of that data and description of the particular phases.
+
+### CrossArch build
+More info about [buildx](https://docs.docker.com/docker-for-mac/multi-arch/)
+```sh
+# login to aws
+/usr/local/bin/aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 573518775438.dkr.ecr.us-east-2.amazonaws.com
+
+# prepare buildx (needed once)
+docker buildx create --name smartmirror
+docker buildx use smartmirror
+docker buildx inspect --bootstrap
+
+# Build images for amd64, arm64 and arm/v7 architectures
+docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 .
+
+# with upload to AWS ECR
+docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t 573518775438.dkr.ecr.us-east-2.amazonaws.com/smart-mirror-distance-sensor:latest --push .
+
+# and confirm the exported images are correctly uploaded
+docker buildx imagetools inspect 573518775438.dkr.ecr.us-east-2.amazonaws.com/smart-mirror-distance-sensor:latest
+```
