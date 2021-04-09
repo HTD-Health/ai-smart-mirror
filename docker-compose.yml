@@ -36,7 +36,7 @@ services:
       - ai-smart-mirror
 
   distance_sensor:
-    image: 573518775438.dkr.ecr.us-east-2.amazonaws.com/smart-mirror-distance_sensor:latest
+    image: 573518775438.dkr.ecr.us-east-2.amazonaws.com/smart-mirror-distance-sensor:latest
     build:
       context: ./src/distance_sensor
     # ports:
