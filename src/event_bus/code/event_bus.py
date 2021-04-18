@@ -10,9 +10,10 @@ logger = logging.getLogger(__name__)
 
 
 async def main(port_in: str, port_out: str):
-    """ Create distribution core
+    """
+    Create distribution core.
 
-    Args:
+    Parameters:
         port_in (str): Port that bus is listening on for new events
         port_out (str): Port on which events are distributed to other components
     """

@@ -26,6 +26,9 @@ logger = logging.getLogger(__name__)
 
 if CAMERA_IMPLEMENTATION == 'cv2':
     class CameraInterface:
+        """
+        Class for handling camera device using OpenCV library.
+        """
         def __init__(self, height: int, width: int):
             self.height = height
             self.width = width
@@ -34,17 +37,29 @@ if CAMERA_IMPLEMENTATION == 'cv2':
             time.sleep(2)
 
         def capture(self, filename: str):
+            """
+            Take a snapshot from the camera and save the captured image under a given name.
+
+            Parameters:
+                filename (str): name of the file with captured image.
+            """
             check, frame = self.camera.read()
             resized_frame = cv2.resize(frame, (self.width, self.height), )
             cv2.imwrite(filename=filename, img=resized_frame)
 
         def close(self):
+            """
+            Closes video file or capturing device.
+            """
             if self.camera:
                 self.camera.release()
 
 
 if CAMERA_IMPLEMENTATION == 'picamera':
     class CameraInterface:
+        """
+        Class for handling camera device using picamera library.
+        """
         def __init__(self, height: int, width: int):
             self.height = height
             self.width = width
@@ -55,14 +70,26 @@ if CAMERA_IMPLEMENTATION == 'picamera':
             time.sleep(2)
 
         def capture(self, filename: str):
+            """
+            Take a snapshot from the camera and save the captured image under a given name.
+
+            Parameters:
+                filename (str): name of the file with captured image.
+            """
             self.camera.capture(filename)
 
         def close(self):
+            """
+            Closes video file or capturing device.
+            """
             if self.camera:
                 self.camera.close()
 
 
 class ActiveCamera:
+    """
+    Class implementing one of the possible camera handling interfaces.
+    """
     def __init__(self, height: int, width: int):
         self.camera = CameraInterface(height, width)
 
@@ -105,8 +132,8 @@ def main(
     consume_socket = context.socket(zmq.SUB)
     consume_socket.setsockopt(zmq.SUBSCRIBE, data_packer.get_buffer())
     # Connect to event bus server to receive
-    recive_url = f"tcp://{event_bus_server}:{receiving_port}"
-    consume_socket.connect(recive_url)
+    received_url = f"tcp://{event_bus_server}:{receiving_port}"
+    consume_socket.connect(received_url)
 
     # Create socket on where we will be producing signals
     produce_socket = context.socket(zmq.PUB)
@@ -118,7 +145,7 @@ def main(
     data_unpacker = xdrlib.Unpacker(b'')
 
     with camera as active_camera:
-        logger.info(f'camera ready, listening for events: {topic_distance} from {recive_url}')
+        logger.info(f'camera ready, listening for events: {topic_distance} from {received_url}')
         # Main loop
         while True:
             # Waiting for any message
@@ -147,8 +174,12 @@ def main(
             produce_socket.send(data_packer.get_buffer())
             data_packer.reset()
 
+
 if __name__ == "__main__":
+    # Creates Argument Parser object named parser
     parser = argparse.ArgumentParser(description='Camera server')
+
+    # Set arguments
     parser.add_argument(
         '--event_bus_server',
         default="127.0.0.1",

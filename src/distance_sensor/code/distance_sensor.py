@@ -24,16 +24,20 @@ class DistanceSensor:
         self.echo_stop = 0
 
     def send_trigger(self) -> None:
-        """ Send trigger pulse to fire up measurement process """
+        """
+        Send trigger pulse to fire up measurement process.
+        """
         # Send pulse to trigger
         GPIO.output(self.trigger_pin, True)
         time.sleep(TRIGGER_PULSE_TIME)
         GPIO.output(self.trigger_pin, False)
 
     def handle_echo_pin_change(self, channel) -> None:
-        """ Handle changes for the pin (high and low voltage)
-            Parameters:
-                channel (int): A pin number to listen changes on
+        """
+        Handle changes for the pin (high and low voltage)
+
+        Parameters:
+            channel (int): A pin number to listen changes on
         """
         # Check if the pin is in High or Low state
         if GPIO.input(channel):
@@ -42,7 +46,9 @@ class DistanceSensor:
             self.echo_stop = time.time()
 
     def measure_distance(self) -> float:
-        """ Trigger sensor and measure a distance """
+        """
+        Trigger sensor and measure a distance.
+        """
         self.send_trigger()
 
         # Calculate pulse length

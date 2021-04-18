@@ -1,6 +1,6 @@
 # Distance sensor
 
-This is the description of how to set up and run ultrasonic distance sensor HC-SR04 for Raspberry Pi 4.
+This is the description of how to set up and run ultrasonic distance sensor HC-SR04 for Raspberry Pi 3.
 
 It also contains example data results gathered from this sensor.
 
@@ -41,7 +41,7 @@ For the example readings you can go to [results](results) folder. For now, it co
 It also consists of graphs with visualization of that data and description of the particular phases.
 
 ### CrossArch build
-More info about [buildx](https://docs.docker.com/docker-for-mac/multi-arch/)
+More info about [buildx](https://docs.docker.com/docker-for-mac/multi-arch/).
 ```sh
 # login to aws
 /usr/local/bin/aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 573518775438.dkr.ecr.us-east-2.amazonaws.com

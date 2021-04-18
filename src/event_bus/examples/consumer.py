@@ -15,13 +15,16 @@ DTYPES = {
 
 
 async def main():
-    s = ctx.socket(zmq.SUB)
-    topicfilter = 10001
-    data_packer.pack_uint(topicfilter)
-    s.setsockopt(zmq.SUBSCRIBE, data_packer.get_buffer())
-    s.connect('tcp://127.0.0.1:5556')
+    """
+    Create consumer core.
+    """
+    consumer_socket = ctx.socket(zmq.SUB)
+    topic_filter = 10001
+    data_packer.pack_uint(topic_filter)
+    consumer_socket.setsockopt(zmq.SUBSCRIBE, data_packer.get_buffer())
+    consumer_socket.connect('tcp://127.0.0.1:5556')
     while True:
-        msg = await s.recv()
+        msg = await consumer_socket.recv()
         data_unpacker.reset(msg)
         topic = data_unpacker.unpack_uint()
         if topic == 10001:
@@ -35,6 +38,6 @@ async def main():
             print('received')
             print(topic)
             print(arr)
-    s.close()
+    consumer_socket.close()
 
 asyncio.run(main())

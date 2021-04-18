@@ -16,14 +16,17 @@ DTYPES = {
 
 
 def main(port, sleep_time):
+    """
+    Create producer core.
+    """
     context = zmq.Context()
     socket = context.socket(zmq.PUB)
     socket.connect("tcp://127.0.0.1:%s" % port)
     data_packer = xdrlib.Packer()
 
     while True:
-        topic = random.randrange(9999,10005)
-        data_array = np.random.rand(3,2)
+        topic = random.randrange(9999, 10005)
+        data_array = np.random.rand(3, 2)
         data_packer.pack_uint(topic)
         data_packer.pack_array(data_array.shape, data_packer.pack_uint)
         data_packer.pack_uint(DTYPES[data_array.dtype.name])
@@ -37,7 +40,10 @@ def main(port, sleep_time):
 
 
 if __name__ == "__main__":
+    # Creates Argument Parser object named parser
     parser = argparse.ArgumentParser(description='Event bus server')
+
+    # Set arguments
     parser.add_argument(
         '--port',
         default="5555",
@@ -49,4 +55,6 @@ if __name__ == "__main__":
         help='How long wait between events (in seconds)'
     )
     args = parser.parse_args()
+
+    # Run module
     main(args.port, args.sleep_time)

@@ -7,6 +7,7 @@ sudo docker pull 573518775438.dkr.ecr.us-east-2.amazonaws.com/smart-mirror-camer
 # run newest image
 sudo docker run --privileged -v /tmp/images:/tmp/images --env LD_LIBRARY_PATH=/opt/vc/lib 573518775438.dkr.ecr.us-east-2.amazonaws.com/smart-mirror-camera
 ```
+If something isn't working take a look to `Run` section on [README](README.md) file.
 
 ## Testing
 
