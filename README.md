@@ -20,7 +20,7 @@ sudo apt install gnupg2 pass
 ## get login command using aws cli
 aws ecr get-login
 
-## !! Remove from outpit of previous command "-e none" and paste result into terminal, will log you into ECR
+## !! Remove from output of previous command "-e none" and paste result into terminal, will log you into ECR
 ## should looks like this:
 ## docker login -u AWS -p ... https://573518775438.dkr.ecr.us-east-2.amazonaws.com
 
