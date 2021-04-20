@@ -1,0 +1,4 @@
+[submodule "ai_mask_model"]
+	path = src/model/ai_mask_model
+	url = https://github.com/HTD-Health/ai-mask-model.git
+	branch = main
