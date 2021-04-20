@@ -1,4 +1,5 @@
-import ... as smart_mirror_model  # TODO: figure out how to manage exporting MM repo to import it here
+import src.model.ai_mask_model.mask_detector.mask_classifier as model
+
 
 def model_loader(path: str):
     """
@@ -10,4 +11,4 @@ def model_loader(path: str):
     Return:
         trained model based on saved model file with all trained weights.
     """
-    return smart_mirror_model.load_from_checkpoint(path)
+    return model.MaskClassifier.load_from_checkpoint(path)
