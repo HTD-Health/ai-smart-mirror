@@ -1,4 +1,4 @@
-import src.model.ai_mask_model.mask_detector.mask_classifier as model
+import src.detector.ai_mask_model.mask_detector.mask_classifier as model
 
 
 def model_loader(path: str):
