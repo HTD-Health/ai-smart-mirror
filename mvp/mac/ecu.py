@@ -4,8 +4,9 @@ import os
 
 from camera import ActiveCamera
 from camera import make_snap
-from detector import detect_mask
-from detector import model_loader
+from mvp.mac.predict_utils.predict import predict
+from mvp.mac.predict_utils.print_results import print_results
+from mvp.mac.predict_utils.load_checkpoint import load_checkpoint
 
 logger = logging.getLogger(__name__)
 
@@ -17,10 +18,10 @@ def run(camera: object, image_format: str, snap_directory: str, neural_model: ob
     time.sleep(3)
 
     # Detect mask
-    try:
-        detect_mask(snap_directory + snap_name, neural_model)
-    finally:
-        os.remove(snap_directory + snap_name)
+    top_p, top_class = predict(snap_name, neural_model, False, 1)
+
+    # Print class and a probability
+    print_results(top_p, top_class, "mvp/mac/tmp/mask_no_mask.json")
 
     # To not spam with measurements, wait until renewing the whole process
     time.sleep(20)
@@ -43,11 +44,10 @@ if __name__ == "__main__":
     )
 
     # Prepare model
-    model_dir = 'mvp/mac/tmp/models/epoch=16-step=8499.ckpt'
+    model_dir = 'mvp/mac/tmp/model_checkpoints/checkpoint.pth'
     if not os.path.exists(model_dir):
         raise FileExistsError("Given directory do not exist. Directory: ", model_dir)
-
-    neural_model = model_loader(model_dir)
+    neural_model = load_checkpoint(model_dir)
 
     # Prepare image destination
     image_dir = 'mvp/mac/tmp/images/'
