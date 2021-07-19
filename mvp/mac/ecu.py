@@ -26,7 +26,7 @@ def run(camera: object, image_format: str, snap_directory: str, neural_model: ob
     print_results(top_p, top_class, "mvp/mac/tmp/mask_no_mask.json")
 
     # To not spam with measurements, wait until renewing the whole process
-    time.sleep(20)
+    time.sleep(10)
 
 
 if __name__ == "__main__":
