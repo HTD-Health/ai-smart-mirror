@@ -4,27 +4,38 @@ import os
 
 from camera import ActiveCamera
 from camera import make_snap
-from mvp.mac.predict_utils.predict import predict
-from mvp.mac.predict_utils.print_results import print_results
-from mvp.mac.predict_utils.load_checkpoint import load_checkpoint
+from predict_utils.predict import predict
+from predict_utils.print_results import print_results
+from predict_utils.load_checkpoint import load_checkpoint
+from predict_utils.process_image import process_image
 
 logger = logging.getLogger(__name__)
 
 
-def run(camera: object, image_format: str, snap_directory: str, neural_model: object):
+def run(image_width: int, image_height: int, image_format: str, snap_directory: str, neural_model: object):
+    # Turn on camera
+    camera = ActiveCamera(
+        width=image_width,
+        height=image_height,
+    )
+
     # Taking a picture
     snap_name = make_snap(camera, image_format, snap_directory)
     logger.debug(f'Snap at directory: {snap_name}')
     time.sleep(3)
 
     # Detect mask
-    top_p, top_class = predict(snap_name, neural_model, False, 1)
+    image = process_image(snap_directory + snap_name)
+    top_p, top_class = predict(image, neural_model, False, 1)
 
     # Print class and a probability
     print_results(top_p, top_class, "mvp/mac/tmp/mask_no_mask.json")
 
+    # Clean up
+    os.remove(snap_directory + snap_name)
+
     # To not spam with measurements, wait until renewing the whole process
-    time.sleep(20)
+    time.sleep(10)
 
 
 if __name__ == "__main__":
@@ -35,13 +46,6 @@ if __name__ == "__main__":
     image_width = 1024
     image_height = 768
     image_format = 'jpg'
-    snap_directory = 'mvp/mac/tmp/'
-    snap_name_container = ['']
-
-    camera = ActiveCamera(
-        width=image_width,
-        height=image_height,
-    )
 
     # Prepare model
     model_dir = 'mvp/mac/tmp/model_checkpoints/checkpoint.pth'
@@ -56,4 +60,4 @@ if __name__ == "__main__":
 
     # START
     while True:
-        run(camera, image_format, snap_directory, neural_model)
+        run(image_width, image_height, image_format, image_dir, neural_model)
