@@ -1,0 +1,5 @@
+argparse==*
+torch==*
+torchvision==*
+Pillow==*
+cv2==*
