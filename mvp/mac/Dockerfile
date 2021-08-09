@@ -13,6 +13,6 @@ COPY . /src
 RUN python3.8 -m pip install --upgrade pip && \
     python3.8 -m pip install --no-cache-dir -r /requirements.txt
 
-ENTRYPOINT ["/bin/bash", "-c", 'python3 /src/ecu.py']
+ENTRYPOINT ["/bin/bash", "-c", 'python3.8 /src/ecu.py']
 
 EXPOSE 8080
