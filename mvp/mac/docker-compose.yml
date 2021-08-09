@@ -1,0 +1,7 @@
+version: "3.8"
+
+services:
+  smart-mirror-mac-demo:
+    build: .
+    image: smart-mirror-mac-demo
+

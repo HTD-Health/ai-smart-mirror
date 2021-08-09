@@ -1,5 +1,4 @@
-argparse==*
-torch==*
-torchvision==*
-Pillow==*
-cv2==*
+Pillow==8.2.0
+opencv-python==4.5.3.56
+torch==1.8.1
+torchvision==0.9.1

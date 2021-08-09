@@ -48,13 +48,13 @@ if __name__ == "__main__":
     image_format = 'jpg'
 
     # Prepare model
-    model_dir = 'mvp/mac/tmp/model_checkpoints/checkpoint.pth'
+    model_dir = 'app/tmp/model_checkpoints/checkpoint.pth'
     if not os.path.exists(model_dir):
         raise FileExistsError("Given directory do not exist. Directory: ", model_dir)
     neural_model = load_checkpoint(model_dir)
 
     # Prepare image destination
-    image_dir = 'mvp/mac/tmp/images/'
+    image_dir = 'app/tmp/images/'
     if not os.path.exists(image_dir):
         raise FileExistsError("Given directory do not exist. Directory: ", image_dir)
 

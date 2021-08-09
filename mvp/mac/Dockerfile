@@ -1,24 +1,18 @@
-FROM ubuntu:18.04
+FROM nvidia/cuda:10.1-cudnn7-runtime
 
-WORKDIR /app
+RUN apt update && \
+    apt install --no-install-recommends -y build-essential software-properties-common && \
+    add-apt-repository -y ppa:deadsnakes/ppa && \
+    apt install --no-install-recommends -y python3.8 python3-pip python3-setuptools python3-distutils && \
+    apt clean && rm -rf /var/lib/apt/lists/*
 
-USER root
+COPY requirements.txt /requirements.txt
 
-ENV PYTHONUNBUFFERED TRUE \
-    PYTHONPATH=/app
+COPY . /src
 
-COPY ./requirements.txt /app
+RUN python3.8 -m pip install --upgrade pip && \
+    python3.8 -m pip install --no-cache-dir -r /requirements.txt
 
-RUN apk update \
-    && apk upgrade --no-cache musl \
-    && apk add --no-cache build-base libzmq musl-dev python3 python3-dev zeromq-dev py3-pip \
-    && pip install --upgrade pip \
-    && apk del build-base musl-dev python3-dev zeromq-dev \
-    && ln -s /usr/bin/python3 /usr/bin/python \
-    && rm -rf /root/.cache /tmp/* \
-    && find / | grep -E "(__pycache__|\.pyc|\.pyo$$)" | xargs rm -rf;
+ENTRYPOINT ["/bin/bash", "-c", 'python3 /src/ecu.py']
 
-RUN pip install --no-cache-dir -r requirements.txt -f https://download.pytorch.org/whl/torch_stable.htm
-
-COPY ./code/ /app
-ENTRYPOINT ["sh", "-c", "python ecu.py"]
+EXPOSE 8080
