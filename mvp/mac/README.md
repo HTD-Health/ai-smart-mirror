@@ -7,4 +7,4 @@ To run `Smart mirror MVP for Mac` type:
 `docker-compose build .`
 `docker-compose up`
 
-Enyoy
+Enyoy!
