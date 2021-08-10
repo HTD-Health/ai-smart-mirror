@@ -1,3 +1,4 @@
+# FROM pytorch/pytorch:1.9.0-cuda10.2-cudnn7-runtime
 FROM nvidia/cuda:10.1-cudnn7-runtime
 
 RUN apt update && \
@@ -13,6 +14,5 @@ COPY . /src
 RUN python3.8 -m pip install --upgrade pip && \
     python3.8 -m pip install --no-cache-dir -r /requirements.txt
 
-ENTRYPOINT ["/bin/bash", "-c", 'python3.8 /src/ecu.py']
-
-EXPOSE 8080
+CMD ["/src/ecu.py"]
+ENTRYPOINT ["python3.8"]
