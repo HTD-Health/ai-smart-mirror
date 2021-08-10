@@ -1,10 +1,13 @@
 
-Before running make sure to install 'docker' and your are working on Mac.
-Also download checkpoint .pth file and store it in `mvp/mac/tmp/model_checkpoints`  
+Before running make sure to install:
+`python3.8`
+`pipenv`
 
-To run `Smart mirror MVP for Mac` type:
-`cd mvp/mac/`
-`docker-compose build .`
-`docker-compose up`
+After installing `python3` and `pipenv`:
+`pipenv sync`
+`pipenv shell`
 
-Enyoy!
+Download checkpoint .pth file and store it in `mvp/mac/tmp/model_checkpoints`  
+
+To make it run type command type commands when you are at main catalogue `ai-smart-mirror`:
+`sudo pythonn3 mvp/mac/ecu.py`
