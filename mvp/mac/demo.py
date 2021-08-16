@@ -12,13 +12,10 @@ from predict_utils.load_checkpoint import load_checkpoint
 logger = logging.getLogger(__name__)
 
 
-def demo(image):
-    # Prepare model
-    model_dir = 'src/tmp/model_checkpoints/checkpoint.pth'
-    if not os.path.exists(model_dir):
-        raise FileExistsError("Given directory do not exist. Directory: ", model_dir)
-    neural_model = load_checkpoint(model_dir)
+neural_model = None
 
+def demo(image):
+    # Image transformation
     image_transform = transforms.Compose([transforms.Resize(255),
                                           transforms.CenterCrop(224),
                                           transforms.ToTensor(),
@@ -29,20 +26,20 @@ def demo(image):
     image.unsqueeze_(0)
 
     top_p, top_class = predict(image, neural_model, False, 1)
-    return print_results(top_p, top_class, "src/tmp/mask_no_mask.json")
+    return print_results(top_p, top_class, "mvp/mac/tmp/mask_no_mask.json")
 
 
 if __name__ == "__main__":
-    # PREPARATION
     logging.basicConfig(level="DEBUG")
 
-    # Prepare camera
-    image_width = 1024
-    image_height = 768
-    image_format = 'jpg'
+    # Prepare model
+    model_dir = 'mvp/mac/tmp/model_checkpoints/checkpoint.pth'
+    if not os.path.exists(model_dir):
+        raise FileExistsError("Given directory do not exist. Directory: ", model_dir)
+    neural_model = load_checkpoint(model_dir)
 
-    # Prepare image destination
-    iface = gr.Interface(fn=demo, inputs=gr.inputs.Image(shape=(200, 200)), oututs="text")
+    # Prepare interface
+    iface = gr.Interface(fn=demo, inputs=gr.inputs.Image(shape=(200, 200)), outputs="text")
 
     # START
-    iface.launch()
+    iface.launch(share=True)
