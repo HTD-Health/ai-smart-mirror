@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 pyzmq = "*"
 opencv-python = "*"
+torch = "*"
+torchvision = "*"
 
 [dev-packages]
 debugpy = "*"
