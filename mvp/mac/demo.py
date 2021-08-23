@@ -6,12 +6,9 @@ from torchvision import transforms
 import json
 
 from predict_utils.predict import predict
-from predict_utils.print_results import print_results
 from predict_utils.load_checkpoint import load_checkpoint
 
-
 logger = logging.getLogger(__name__)
-
 
 neural_model = None
 
