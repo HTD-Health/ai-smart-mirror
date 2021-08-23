@@ -3,6 +3,7 @@ import os
 
 import gradio as gr
 from torchvision import transforms
+import json
 
 from predict_utils.predict import predict
 from predict_utils.print_results import print_results
@@ -14,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 neural_model = None
 
+
 def demo(image):
     # Image transformation
     image_transform = transforms.Compose([transforms.Resize(255),
@@ -22,11 +24,26 @@ def demo(image):
                                           transforms.Normalize(
                                               [0.485, 0.456, 0.406],
                                               [0.229, 0.224, 0.225])])
+    from PIL import Image
+    image = Image.fromarray(image)
     image = image_transform(image)
     image.unsqueeze_(0)
 
     top_p, top_class = predict(image, neural_model, False, 1)
-    return print_results(top_p, top_class, "mvp/mac/tmp/mask_no_mask.json")
+
+    with open("mvp/mac/tmp/mask_no_mask.json", 'r') as f:
+        mask_no_mask = json.load(f)
+
+    result_text = ""
+    index = 0
+    for elem in top_class:
+        mask_state = "yes"
+        if "no_mask" in {mask_no_mask[str(int(elem))]}:
+            mask_state = "no"
+        result_text = f"Mask on face: {mask_state}" + f"\nHow sure I am: {top_p[index] * 100:.0f}%"
+        index += 1
+
+    return result_text
 
 
 if __name__ == "__main__":
@@ -39,7 +56,7 @@ if __name__ == "__main__":
     neural_model = load_checkpoint(model_dir)
 
     # Prepare interface
-    iface = gr.Interface(fn=demo, inputs=gr.inputs.Image(shape=(200, 200)), outputs="text")
+    iface = gr.Interface(fn=demo, inputs=gr.inputs.Image(shape=(255, 224)), outputs="text")
 
     # START
     iface.launch(share=True)

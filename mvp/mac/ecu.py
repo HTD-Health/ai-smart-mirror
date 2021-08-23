@@ -29,7 +29,7 @@ def run(image_width: int, image_height: int, image_format: str, snap_directory: 
     top_p, top_class = predict(image, neural_model, False, 1)
 
     # Print class and a probability
-    print_results(top_p, top_class, "src/tmp/mask_no_mask.json")
+    print_results(top_p, top_class, "mvp/mac/tmp/mask_no_mask.json")
 
     # Clean up
     os.remove(snap_directory + snap_name)
@@ -48,13 +48,13 @@ if __name__ == "__main__":
     image_format = 'jpg'
 
     # Prepare model
-    model_dir = 'src/tmp/model_checkpoints/checkpoint.pth'
+    model_dir = 'mvp/mac/tmp/model_checkpoints/checkpoint.pth'
     if not os.path.exists(model_dir):
         raise FileExistsError("Given directory do not exist. Directory: ", model_dir)
     neural_model = load_checkpoint(model_dir)
 
     # Prepare image destination
-    image_dir = 'src/tmp/images/'
+    image_dir = 'mvp/mac/tmp/images/'
     if not os.path.exists(image_dir):
         raise FileExistsError("Given directory do not exist. Directory: ", image_dir)
 
