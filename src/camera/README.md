@@ -13,7 +13,7 @@ If something isn't working take a look to `Run` section on [README](README.md) f
 
 ```bash
 # run event bus
-docker-compose up event-bus
+docker-compose up camera
 
 # run camera module
 python run.py --image_dir=`pwd`
@@ -33,6 +33,9 @@ More info about [buildx](https://docs.docker.com/docker-for-mac/multi-arch/)
 docker buildx create --name smartmirror
 docker buildx use smartmirror
 docker buildx inspect --bootstrap
+
+# go to module source folder
+cd src/camera
 
 # Build images for amd64, arm64 and arm/v7 architectures
 docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 .

@@ -53,6 +53,23 @@ services:
     networks:
       - ai-smart-mirror
 
+  detector:
+    image: 573518775438.dkr.ecr.us-east-2.amazonaws.com/smart-mirror-detector:latest
+    build:
+      context: ./src/detector
+    # ports:
+    #   - 5555:5555
+    #   - 5556:5556
+    privileged: True
+    environment:
+      - LOG_LEVEL=debug
+      - EVENT_BUS_SERVER_IP=event-bus
+      - LD_LIBRARY_PATH=/opt/vc/lib
+    volumes:
+      - /tmp/images:/tmp/images
+    networks:
+      - ai-smart-mirror
+
 networks:
   ai-smart-mirror:
     name: ai-smart-mirror

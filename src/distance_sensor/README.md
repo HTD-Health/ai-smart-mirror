@@ -51,6 +51,9 @@ docker buildx create --name smartmirror
 docker buildx use smartmirror
 docker buildx inspect --bootstrap
 
+# go to module source folder
+cd src/distance_sensor
+
 # Build images for amd64, arm64 and arm/v7 architectures
 docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 .
 

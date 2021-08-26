@@ -229,6 +229,8 @@ if __name__ == "__main__":
         help='Captured images output directory'
     )
     args = parser.parse_args()
+
+    # Setting logger
     logging.basicConfig(
         level=args.log_level.upper()
     )
